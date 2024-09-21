@@ -18,11 +18,16 @@ class User(UserBase):
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-
+    status: Optional[str] = None
+    completed: Optional[bool]= None
 class TaskCreate(TaskBase):
     pass
 
+class TaskUpdate(TaskBase):
+    pass
+
 class Task(TaskBase):
+
     id: int
     owner_id: int
 
