@@ -32,7 +32,6 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     try {
       const response = await login(email, password);
-      localStorage.setItem('token', response.data.access_token); // Store token
       setIsLoggedIn(true); // Set isLoggedIn state
       toast({
         title: 'Logged in successfully!',
@@ -120,7 +119,7 @@ const LoginPage: React.FC = () => {
           <Button
             variant="link"
             color="purple.400"
-            onClick={() => router.push('/register')}
+            onClick={() => router.push('/auth/register')}
           >
             Register
           </Button>

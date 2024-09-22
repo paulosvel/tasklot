@@ -1,20 +1,23 @@
-import { useEffect } from 'react';
+import { JSX, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStore } from '../stores/useStore';
 
-const withAuth = (WrappedComponent) => {
-  return (props) => {
+const withAuth = (WrappedComponent: any) => {
+  return (props: any) => {
     const router = useRouter();
     const isLoggedIn = useStore((state) => state.isLoggedIn);
     const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
 
     useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/auth/login');
-      } else {
-        setIsLoggedIn(true);
-      }
+      const checkAuth = async () => {
+        try {
+          await fetch('/users/me', { credentials: 'include' });
+          setIsLoggedIn(true);
+        } catch (error) {
+          router.push('/auth/login');
+        }
+      };
+      checkAuth();
     }, [router, setIsLoggedIn]);
 
     return isLoggedIn ? <WrappedComponent {...props} /> : null;

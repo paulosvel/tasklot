@@ -20,7 +20,7 @@ import { motion } from 'framer-motion';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import withAuth from '@/components/withAuth';
-
+import { logout } from '@/api/api';
 // Animations using framer-motion
 const MotionBox = motion(Box as any);
 const MotionGridItem = motion(GridItem as any);
@@ -45,7 +45,7 @@ const Dashboard: NextPage = () => {
   // Handle logout
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/auth/login');
   };
 
   return (
