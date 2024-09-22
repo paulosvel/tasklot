@@ -1,14 +1,19 @@
 // pages/auth/login.tsx
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Center,
+  Container,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Stack,
   Text,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -21,6 +26,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const setIsLoggedIn = useStore((state) => state.setIsLoggedIn);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,59 +53,80 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Center minH="100vh" bg="gray.50">
-      <Box
-        maxW="md"
-        w="full"
-        bg="white"
-        p={8}
-        borderRadius="lg"
-        boxShadow="md"
-      >
-        <Text fontSize="2xl" mb={4} textAlign="center" fontWeight="bold">
-          Login to Your Account
-        </Text>
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={4}>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              colorScheme="teal"
-              size="lg"
-              w="full"
-              mt={4}
-            >
-              Sign In
-            </Button>
-          </Stack>
-        </form>
-        <Text mt={4} textAlign="center">
-          Don’t have an account?{' '}
+    <Box
+      bgGradient="linear(to-r, black, purple.900)"
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Container maxW="md" bg="blackAlpha.700" p={8} borderRadius="lg" boxShadow="xl">
+        <Heading mb={6} color="white" textAlign="center">
+          Login to Tasklot
+        </Heading>
+
+        {error && (
+          <Alert status="error" mb={6}>
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
+
+        <VStack spacing={4} align="stretch">
+          <FormControl id="email" isRequired>
+            <FormLabel color="purple.200" fontStyle="italic">Email address</FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              bg="blackAlpha.600"
+              color="white"
+              borderColor="purple.500"
+              _placeholder={{ color: 'gray.500' }}
+              _hover={{ borderColor: 'purple.400' }}
+              _focus={{ borderColor: 'purple.400' }}
+            />
+          </FormControl>
+
+          <FormControl id="password" isRequired>
+            <FormLabel color="purple.200" fontStyle="italic">Password</FormLabel>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              bg="blackAlpha.600"
+              color="white"
+              borderColor="purple.500"
+              _placeholder={{ color: 'gray.500' }}
+              _hover={{ borderColor: 'purple.400' }}
+              _focus={{ borderColor: 'purple.400' }}
+            />
+          </FormControl>
+
+          <Button
+            colorScheme="purple"
+            size="lg"
+            onClick={handleSubmit}
+            _hover={{ bg: 'purple.500', transform: 'scale(1.05)' }}
+          >
+            Login
+          </Button>
+        </VStack>
+
+        <Text mt={6} color="gray.400" textAlign="center">
+          Don't have an account?{' '}
           <Button
             variant="link"
-            colorScheme="teal"
-            onClick={() => router.push('/auth/register')}
+            color="purple.400"
+            onClick={() => router.push('/register')}
           >
             Register
           </Button>
         </Text>
-      </Box>
-    </Center>
+      </Container>
+    </Box>
   );
 };
 
