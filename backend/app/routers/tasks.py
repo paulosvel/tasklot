@@ -13,3 +13,8 @@ def read_tasks(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
 @router.post("/", response_model=schemas.Task)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     return crud.tasks.create_task(db=db, task=task, user_id=1)  # Example user_id
+
+@router.put("/", response_model=schemas.Task)
+def update_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
+    return crud.tasks.update_task(db=db, task=task, user_id=1)  # Example user_id
+
