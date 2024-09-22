@@ -6,6 +6,7 @@ from .database import engine, Base, get_db
 from .routers.auth import create_access_token, get_current_user  # Keep relative import for JWT methods
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 # Initialize the database
 Base.metadata.create_all(bind=engine)
@@ -47,11 +48,24 @@ def login(login_request: schemas.LoginRequest, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     
-    # JWT token expires after 30 minutes
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(data={"sub": user.email}, expires_delta=access_token_expires)
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,  # Ensure the cookie is only sent over HTTPS
+        samesite="Lax"  # Adjust this based on your requirements
+    )
+    return response
+
+@app.post("/auth/logout")
+def logout():
+    response = JSONResponse(content={"message": "Successfully logged out"})
+    response.delete_cookie(key="access_token")
+    return response
 
 # Get the current user (protected route)
 @app.get("/users/me", response_model=schemas.User)

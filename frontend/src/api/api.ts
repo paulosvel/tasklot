@@ -6,20 +6,10 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-// Interceptors to add token to requests and handle responses globally
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token'); // Get token from local storage
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
+// Interceptors to handle responses globally
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -40,6 +30,10 @@ export const login = async (email: string, password: string) => {
 
 export const register = async (email: string, password: string, name: string) => {
   return axiosInstance.post('/auth/register', { email, password, name });
+};
+
+export const logout = async () => {
+  return axiosInstance.post('/auth/logout');
 };
 
 // Task Management

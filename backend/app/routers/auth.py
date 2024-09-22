@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from .. import models, schemas, crud
@@ -27,12 +27,14 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 # Validate and get the current user based on the JWT token
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+def get_current_user(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -40,9 +42,7 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    from .. import crud
     user = crud.users.get_user_by_email(db, email=email)
     if user is None:
-
         raise credentials_exception
     return user

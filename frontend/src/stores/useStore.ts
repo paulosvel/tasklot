@@ -22,11 +22,6 @@ export const useStore = create<StoreState>((set) => ({
   tasks: [],
   isLoggedIn: false,
   setIsLoggedIn: (loggedIn) => {
-    if (loggedIn) {
-      localStorage.setItem('isLoggedIn', 'true');
-    } else {
-      localStorage.removeItem('isLoggedIn');
-    }
     set({ isLoggedIn: loggedIn });
   },
   fetchTasks: async () => {
