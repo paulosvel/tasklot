@@ -41,8 +41,8 @@ export const fetchTasks = async () => {
   return axiosInstance.get('/tasks');
 };
 
-export const createTask = async (title: string, description: string) => {
-  return axiosInstance.post('/tasks', { title, description });
+export const createTask = async (title: string, description: string, priority: string, dueDate: string, assignee: string) => {
+  return axiosInstance.post('/tasks', { title, description, priority, dueDate, assignee });
 };
 
 export const updateTask = async (id: number, data: { title: string; description: string; completed: boolean }) => {
@@ -51,4 +51,12 @@ export const updateTask = async (id: number, data: { title: string; description:
 
 export const deleteTask = async (id: number) => {
   return axiosInstance.delete(`/tasks/${id}`);
+};
+
+export const createTeam = async (name: string) => {
+  return axiosInstance.post('/teams', { name });
+};
+
+export const inviteToTeam = async (teamId: number, email: string, role: string) => {
+  return axiosInstance.post(`/teams/${teamId}/invite`, { email, role });
 };

@@ -1,6 +1,20 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class TeamBase(BaseModel):
+    name: str
+
+class TeamCreate(TeamBase):
+    pass
+
+class Team(TeamBase):
+    id: int
+    created_by: int
+    members: List['User'] = []  # Use forward reference for User
+
+    class Config:
+        orm_mode = True
+
 class UserBase(BaseModel):
     email: str
 
@@ -10,7 +24,21 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
     is_active: bool
-    name: Optional[str] = None  # Make the name field optional
+    name: Optional[str] = None
+    teams: List[Team] = []  # Reference Team class here
+
+    class Config:
+        orm_mode = True
+
+class TeamMemberBase(BaseModel):
+    role: str
+
+class TeamMemberCreate(TeamMemberBase):
+    pass
+
+class TeamMember(TeamMemberBase):
+    team_id: int
+    user_id: int
 
     class Config:
         orm_mode = True
@@ -20,6 +48,7 @@ class TaskBase(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
     completed: Optional[bool]= None
+
 class TaskCreate(TaskBase):
     pass
 
@@ -27,7 +56,6 @@ class TaskUpdate(TaskBase):
     pass
 
 class Task(TaskBase):
-
     id: int
     owner_id: int
 

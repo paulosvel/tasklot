@@ -1,7 +1,7 @@
 import { JSX, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useStore } from '../stores/useStore';
-
+import { fetchTasks } from '../api/api';
 const withAuth = (WrappedComponent: any) => {
   return (props: any) => {
     const router = useRouter();
@@ -11,9 +11,15 @@ const withAuth = (WrappedComponent: any) => {
     useEffect(() => {
       const checkAuth = async () => {
         try {
-          await fetch('/users/me', { credentials: 'include' });
-          setIsLoggedIn(true);
+          const response = await fetchTasks();
+          if (response.status == 200) {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+            router.push('/auth/login');
+          }
         } catch (error) {
+          setIsLoggedIn(false);
           router.push('/auth/login');
         }
       };

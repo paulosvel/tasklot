@@ -7,6 +7,7 @@ from .routers.auth import create_access_token, get_current_user  # Keep relative
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from .routers import auth, users, teams
 
 # Initialize the database
 Base.metadata.create_all(bind=engine)
@@ -92,3 +93,7 @@ def update_task(task_id: int, task_update: schemas.TaskUpdate, db: Session = Dep
 @app.delete("/tasks/{task_id}", response_model=schemas.Task)
 def delete_task(task_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return crud.tasks.delete_task(db=db, task_id=task_id, user_id=current_user.id)
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(teams.router, prefix="/teams", tags=["teams"])
