@@ -27,7 +27,7 @@ def authenticate_user(db: Session, email: str, password: str):
     return user
 
 def create_team(db: Session, team: schemas.TeamCreate, user_id: int):
-    db_team = models.Team(name=team.name, created_by=user_id)
+    db_team = models.Team(name=team.name, owner_id=user_id)  
     db.add(db_team)
     db.commit()
     db.refresh(db_team)

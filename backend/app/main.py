@@ -7,7 +7,7 @@ from .routers.auth import create_access_token, get_current_user  # Keep relative
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from .routers import auth, users, teams
+from .routers import auth, users, teams  # Ensure teams is imported
 
 # Initialize the database
 Base.metadata.create_all(bind=engine)
@@ -96,4 +96,4 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: schem
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
-app.include_router(teams.router, prefix="/teams", tags=["teams"])
+app.include_router(teams.router, prefix="/teams", tags=["teams"])  # Ensure this line is present

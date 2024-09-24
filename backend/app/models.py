@@ -28,7 +28,7 @@ class Team(Base):
     __tablename__ = "teams"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id"))
     members = relationship("TeamMember", back_populates="team")
 
 class TeamMember(Base):

@@ -9,7 +9,7 @@ class TeamCreate(TeamBase):
 
 class Team(TeamBase):
     id: int
-    created_by: int
+    owner_id: int
     members: List['User'] = []  # Use forward reference for User
 
     class Config:

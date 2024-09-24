@@ -6,9 +6,10 @@ from ..routers.auth import get_current_user
 
 router = APIRouter()
 
-@router.post("/teams/", response_model=schemas.Team)
-def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
-    return crud.create_team(db=db, team=team, user_id=current_user.id)
+
+@router.post("/", response_model=schemas.Team)
+def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db)):
+    return crud.teams.create_team(db=db, team=team, user_id=1)  # Example user_id
 
 @router.post("/teams/{team_id}/invite", response_model=schemas.TeamMember)
 def invite_to_team(team_id: int, email: str, role: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
