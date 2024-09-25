@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -11,20 +11,38 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   useToast,
 } from '@chakra-ui/react';
-import { inviteToTeam } from '@/api/api';
+import { inviteToTeam, getUserTeams } from '@/api/api'; // Ensure this API function is defined
 
 const InviteToTeamModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
+  const [teams, setTeams] = useState([]); // State to hold teams
+  const [selectedTeam, setSelectedTeam] = useState(''); // State to hold selected team
   const toast = useToast();
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const userTeams = await getUserTeams(); // Fetch user teams
+        setTeams(userTeams);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
+    };
+    fetchTeams();
+  }, []);
 
   const handleInviteToTeam = async () => {
     setLoading(true);
     try {
-      await inviteToTeam(teamId, email, role);
+      const inviteData = {
+        email: email,
+        role: 'member', // or whatever role you want to assign
+      };
+      await inviteToTeam(selectedTeam, inviteData); // Pass the selected team and inviteData object
       toast({
         title: 'Member invited successfully!',
         status: 'success',
@@ -51,7 +69,21 @@ const InviteToTeamModal = ({ isOpen, onClose }) => {
         <ModalHeader>Invite Member to Team</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl id="email" isRequired>
+          <FormControl id="team" isRequired>
+            <FormLabel>Select Team</FormLabel>
+            <Select
+              placeholder="Select team"
+              value={selectedTeam}
+              onChange={(e) => setSelectedTeam(e.target.value)}
+            >
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl id="email" isRequired mt={4}>
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
@@ -60,25 +92,12 @@ const InviteToTeamModal = ({ isOpen, onClose }) => {
               placeholder="Enter member's email"
             />
           </FormControl>
-          <FormControl id="role" isRequired>
-            <FormLabel>Role</FormLabel>
-            <Input
-              type="text"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              placeholder="Enter member's role"
-            />
-          </FormControl>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button
-            colorScheme="purple"
-            onClick={handleInviteToTeam}
-            isLoading={loading}
-          >
+          <Button colorScheme="purple" onClick={handleInviteToTeam} isLoading={loading}>
             Invite Member
           </Button>
         </ModalFooter>

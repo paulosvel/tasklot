@@ -57,6 +57,12 @@ export const createTeam = async (name: string) => {
   return axiosInstance.post('/teams', { name });
 };
 
-export const inviteToTeam = async (teamId: number, email: string, role: string) => {
-  return axiosInstance.post(`/teams/${teamId}/invite`, { email, role });
+export const inviteToTeam = async (teamId: number, inviteData: { email: string; role: string }) => {
+  return axiosInstance.post(`/teams/${teamId}/invite`, inviteData);
+};
+
+// New API function to fetch user teams
+export const getUserTeams = async () => {
+  const response = await axiosInstance.get('/teams');
+  return response.data;
 };

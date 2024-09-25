@@ -94,6 +94,17 @@ def update_task(task_id: int, task_update: schemas.TaskUpdate, db: Session = Dep
 def delete_task(task_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     return crud.tasks.delete_task(db=db, task_id=task_id, user_id=current_user.id)
 
+@app.get("/teams/", response_model=list[schemas.Team])
+def get_teams(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    print(f"Fetching teams for user: {current_user.email}, skip: {skip}, limit: {limit}")
+    teams = crud.teams.get_teams(db, user_id=current_user.id, skip=skip, limit=limit)
+    print(f"Fetched tasks: {teams}")
+    return teams
+
+@app.post("/teams/", response_model=schemas.Team)
+def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    return crud.teams.create_team(db=db, team=team, user_id=current_user.id)
+
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(teams.router, prefix="/teams", tags=["teams"])  # Ensure this line is present

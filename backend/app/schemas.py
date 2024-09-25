@@ -3,14 +3,12 @@ from typing import List, Optional
 
 class TeamBase(BaseModel):
     name: str
-
 class TeamCreate(TeamBase):
     pass
 
 class Team(TeamBase):
     id: int
     owner_id: int
-    members: List['User'] = []  # Use forward reference for User
 
     class Config:
         orm_mode = True
@@ -48,6 +46,10 @@ class TaskBase(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
     completed: Optional[bool]= None
+
+class InviteMember(BaseModel):
+    email: str
+    role: str
 
 class TaskCreate(TaskBase):
     pass

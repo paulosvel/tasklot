@@ -13,15 +13,16 @@ import {
   Spacer,
   Avatar,
   useDisclosure,
+  Select,
 } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../stores/useStore';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import withAuth from '@/components/withAuth';
-import { logout } from '@/api/api';
+import { getUserTeams, logout } from '@/api/api';
 import CreateTeamModal from '@/components/CreateTeamModal';
 import InviteToTeamModal from '@/components/InviteTeamModal';
 
@@ -35,6 +36,20 @@ const Dashboard: NextPage = () => {
   const router = useRouter();
   const { isOpen: isCreateTeamOpen, onOpen: onCreateTeamOpen, onClose: onCreateTeamClose } = useDisclosure();
   const { isOpen: isInviteToTeamOpen, onOpen: onInviteToTeamOpen, onClose: onInviteToTeamClose } = useDisclosure();
+  const [teams, setTeams] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState('');
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const userTeams = await getUserTeams(); // Fetch user teams
+        setTeams(userTeams);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+      }
+    };
+    fetchTeams();
+  }, []);
 
   useEffect(() => {
     fetchTasks();
@@ -49,7 +64,34 @@ const Dashboard: NextPage = () => {
     router.push('/create-task');
   };
 
-  const isAdmin = user?.teams?.some(team => team.role === 'admin');
+  const isAdmin = user?.teams?.some((team: { role: string; }) => team.role === 'admin');
+
+  const handleInviteToTeam = async () => {
+    setLoading(true);
+    try {
+        const inviteData = {
+            email: email,
+            role: 'member', // or whatever role you want to assign
+        };
+        await inviteToTeam(selectedTeam, inviteData); // Pass the inviteData object
+        toast({
+            title: 'Member invited successfully!',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+        });
+        onClose();
+    } catch (error) {
+        toast({
+            title: 'Failed to invite member.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+        });
+    } finally {
+        setLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -107,6 +149,15 @@ const Dashboard: NextPage = () => {
               mr={4}
             >
               Create Team
+            </Button>
+            <Button
+              colorScheme="purple"
+              size="md"
+              onClick={onInviteToTeamOpen}
+              _hover={{ bg: 'purple.500', transform: 'scale(1.05)' }}
+              mr={4}
+            >
+              Invite to Team
             </Button>
             {isAdmin && (
               <Button
@@ -174,7 +225,7 @@ const Dashboard: NextPage = () => {
       </Container>
 
       <CreateTeamModal isOpen={isCreateTeamOpen} onClose={onCreateTeamClose} />
-      <InviteToTeamModal isOpen={isInviteToTeamOpen} onClose={onInviteToTeamClose} />
+      <InviteToTeamModal isOpen={isInviteToTeamOpen} onClose={onInviteToTeamClose} selectedTeam={selectedTeam} />
     </Box>
   );
 };

@@ -11,3 +11,11 @@ def create_team(db: Session, team, user_id: int):
     db.commit()
     db.refresh(db_team)
     return db_team
+
+def add_team_member(db: Session, team_id: int, user_id: int, role: str):
+    # Create a new team member entry
+    team_member = models.TeamMember(team_id=team_id, user_id=user_id, role=role)
+    db.add(team_member)
+    db.commit()
+    db.refresh(team_member)
+    return team_member
