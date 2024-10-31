@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import auth, tasks, users, test, teams, comments  # Ensure the new routers are included
+from .routes import auth, tasks, users, teams, comments  # Ensure the new routers are included
 
 app = FastAPI()
 
@@ -22,7 +22,6 @@ app.include_router(tasks.router)
 app.include_router(users.router)
 app.include_router(teams.router)  # Include the teams router
 app.include_router(comments.router)  # Include the comments router
-app.include_router(test.router)
 
 # WebSocket endpoint
 @app.websocket("/ws/tasks")

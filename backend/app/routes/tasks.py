@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.models.task import Task
 from app.schemas.task import TaskCreate
 from app.database.database import SessionLocal
@@ -19,3 +19,11 @@ def read_tasks():
     db = SessionLocal()
     tasks = db.query(Task).all()
     return tasks
+
+@router.get("/tasks/{task_id}")
+def read_task(task_id: int):
+    db = SessionLocal()
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task

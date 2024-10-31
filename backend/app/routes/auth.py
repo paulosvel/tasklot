@@ -4,6 +4,8 @@ from app.schemas.user import UserCreate
 from app.database.database import SessionLocal
 from fastapi import HTTPException, status
 from pydantic import BaseModel
+from jose import jwt
+import datetime
 
 class LoginRequest(BaseModel):
     username: str
@@ -26,4 +28,11 @@ def login(login_request: LoginRequest):
     db_user = db.query(User).filter(User.username == login_request.username, User.password == login_request.password).first()
     if not db_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    return {"message": "Login successful", "user": db_user.username}
+    
+    # Create JWT token
+    token = jwt.encode({
+        "sub": db_user.id,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expiration
+    }, SECRET_KEY, algorithm=ALGORITHM)
+    
+    return {"access_token": token, "token_type": "bearer"}
