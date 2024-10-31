@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import TaskCard from "./TaskCard";
 
-const TaskList = () => {
-  const [tasks, setTasks] = useState([]);
+const TaskList = ({ tasks, setTasks }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -21,7 +20,19 @@ const TaskList = () => {
     };
 
     fetchTasks();
-  }, []);
+  }, [setTasks]);
+
+  const handleComplete = async (taskId) => {
+    try {
+      const updatedTasks = tasks.map(task => 
+        task.id === taskId ? { ...task, status: 'Completed' } : task
+      );
+      setTasks(updatedTasks);
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`, { status: 'Completed' });
+    } catch (error) {
+      console.error("Error marking task as completed:", error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -44,7 +55,7 @@ const TaskList = () => {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {tasks.map((task) => (
-            <TaskCard key={task?.id} task={task} />
+            <TaskCard key={task.id} task={task} onComplete={() => handleComplete(task.id)} />
           ))}
         </div>
       )}
