@@ -11,4 +11,4 @@ class Task(Base):
     due_date = Column(String)  # You can use DateTime for actual date handling
     status = Column(String)  # e.g., To-Do, In Progress, Done
     owner_id = Column(Integer, ForeignKey('users.id'))
-    owner = relationship("User", back_populates="tasks")
+    owner = relationship("User", back_populates="tasks", foreign_keys=[owner_id])

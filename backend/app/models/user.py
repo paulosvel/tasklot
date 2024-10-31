@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.database import Base
+from app.models.task import Task
 
 class User(Base):
     __tablename__ = 'users'
@@ -9,5 +10,8 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
-    role = Column(String)  # e.g., admin, manager, member
-    tasks = relationship("Task", back_populates="owner")
+    role_id = Column(Integer, ForeignKey('roles.id'))  # Foreign key to roles
+    role = relationship("Role", back_populates="users")  # Use string reference
+    team_id = Column(Integer, ForeignKey("teams.id"))
+    team = relationship("Team", back_populates="members")
+    tasks = relationship("Task", back_populates="owner", foreign_keys=[Task.owner_id])

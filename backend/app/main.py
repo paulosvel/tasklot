@@ -1,9 +1,34 @@
-from fastapi import FastAPI
-from .routes import auth, tasks, users, test  # Ensure the test router is included
+from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+from .routes import auth, tasks, users, test, teams, comments  # Ensure the new routers are included
 
 app = FastAPI()
 
-app.include_router(auth.router, prefix="/api")
-app.include_router(tasks.router, prefix="/api")
-app.include_router(users.router, prefix="/api")
-app.include_router(test.router)  # This line is crucial
+# Allow CORS for specific origins
+origins = [
+    "http://localhost:3000",  # Your frontend URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router)  # Include the auth router
+app.include_router(tasks.router)
+app.include_router(users.router)
+app.include_router(teams.router)  # Include the teams router
+app.include_router(comments.router)  # Include the comments router
+app.include_router(test.router)
+
+# WebSocket endpoint
+@app.websocket("/ws/tasks")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        # Broadcast the updated task to all connected clients
+        await websocket.send_text(data)
