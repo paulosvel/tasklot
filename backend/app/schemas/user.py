@@ -5,6 +5,10 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 class UserInDB(UserCreate):
     id: int
     hashed_password: str  # Assuming you store the hashed password

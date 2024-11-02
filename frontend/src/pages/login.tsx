@@ -7,20 +7,27 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage("");
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         username,
         password,
       });
+
+      if (!response.data) {
+        throw new Error("Invalid response from server");
+      }
+
       localStorage.setItem("token", response.data.token);
       router.push("/dashboard");
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (error: any) {
+      setErrorMessage(error?.message);
     } finally {
       setIsLoading(false);
     }

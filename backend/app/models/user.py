@@ -10,8 +10,8 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
-    role_id = Column(Integer, ForeignKey('roles.id'))  # Foreign key to roles
-    role = relationship("Role", back_populates="users")  # Use string reference
-    team_id = Column(Integer, ForeignKey("teams.id"))
+    role_id = Column(Integer, ForeignKey('roles.id'), nullable=True)  # Allow NULL
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)  # Allow NULL
     team = relationship("Team", back_populates="members")
     tasks = relationship("Task", back_populates="owner", foreign_keys=[Task.owner_id])
+    role = relationship("Role")  # Define relationship if needed
