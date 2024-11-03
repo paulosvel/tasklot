@@ -5,9 +5,9 @@ export const signInWithEmail = async (email: string, password: string) => {
   const { user, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     console.error('Sign-in error:', error.message);
-    throw new Error(error.message); // Throw error to handle in the UI
+    return { error }; // Return the error object
   }
-  return user;
+  return { user }; // Return the user object
 };
 
 export const signInWithGoogle = async () => {
@@ -26,20 +26,21 @@ export const signOut = async () => {
   }
 };
 
-export const signUpWithEmail = async (email: string, password: string, username: string) => {
+export const signUpWithEmail = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
-
+  console.log(data);
+  console.log(error);
   if (error) {
     throw new Error(error.message);
+
   }
 
-  // Store additional user information (like username) in your database
   const { error: profileError } = await supabase
-    .from('profiles') // Ensure this table exists
-    .insert([{ id: data.user.id, username }]);
+    .from('users') // Ensure this table exists
+    .insert([{ id: data.user?.id, email }]);
 
   if (profileError) {
     throw new Error(profileError.message);

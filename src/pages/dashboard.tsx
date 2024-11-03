@@ -1,20 +1,32 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { supabase } from "../lib/supabaseClient"; 
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
-import { useRouter } from "next/router";
+import TeamForm from "../components/TeamForm";
+import Notifications from "../components/Notifications";
+import TeamInviteForm from "../components/TeamInviteForm";
+import useUserStore from "../store/userStore";
 
-const Dashboard = ({ currentUser }) => {
+const Dashboard = ({ isAdmin, adminTeamId }: { isAdmin: boolean, adminTeamId: string }) => {
   const router = useRouter();
+  const setCurrentUserId = useUserStore((state) => state.setCurrentUserId);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push("/login"); // Redirect to login if not authenticated
-    }
-  }, [currentUser]);
+    const fetchCurrentUser = async () => {
+      const { data: user }: any = await supabase.auth.getUser();
+      console.log(user);
+      if (user) {
+        setCurrentUserId(user.user.id); 
+        console.log(user.user.id);
+      } else {
+        router.push("/login");
+      }
+    };
 
-  const [tasks, setTasks] = useState([]);
+    fetchCurrentUser();
+  }, [router, setCurrentUserId]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -26,13 +38,17 @@ const Dashboard = ({ currentUser }) => {
               Manage and organize your tasks efficiently
             </p>
           </div>
-          
+          <div>
+            <Notifications  />
+            <TeamInviteForm teamId={adminTeamId} />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <TeamForm currentUserId={useUserStore.getState().currentUserId} />
             <div className="lg:col-span-1">
-              <TaskForm currentUserId={currentUser?.id} />
+              <TaskForm />
             </div>
             <div className="lg:col-span-2">
-              <TaskList tasks={tasks} setTasks={setTasks} />
+              <TaskList  setTasks={setTasks} />
             </div>
           </div>
         </div>

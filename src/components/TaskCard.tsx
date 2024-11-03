@@ -3,7 +3,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import axios from "axios";
 import TaskInterface from "../../utils/TaskInterface";
-const TaskCard = ({ task, currentUserId }: TaskInterface) => {
+import useUserStore from "../store/userStore";
+
+const TaskCard = ({ task }: TaskInterface) => {
+  const { currentUserId } = useUserStore();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
@@ -34,7 +37,7 @@ const TaskCard = ({ task, currentUserId }: TaskInterface) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 hover:shadow-xl transition-shadow duration-300">
       {isEditing ? (
         <motion.form
           onSubmit={handleSubmit}
@@ -75,13 +78,12 @@ const TaskCard = ({ task, currentUserId }: TaskInterface) => {
             </select>
           )}
           <div className="flex justify-between">
-            <button type="submit" className="bg-blue-600 text-white rounded-md px-4 py-2">Update Task</button>
-            <button type="button" onClick={handleCloseEdit} className="bg-gray-600 text-white rounded-md px-4 py-2">Cancel</button>
+            <button type="submit" className="button">Update Task</button>
+            <button type="button" onClick={handleCloseEdit} className="button-secondary">Cancel</button>
           </div>
         </motion.form>
       ) : (
         <motion.div
-          className="space-y-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}

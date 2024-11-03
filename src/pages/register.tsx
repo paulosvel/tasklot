@@ -7,7 +7,6 @@ import Link from "next/link";
 export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
   });
@@ -20,7 +19,7 @@ export default function Register() {
     setErrorMessage(""); // Reset error message
 
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.username);
+      await signUpWithEmail(formData.email, formData.password);
       router.push("/login"); // Redirect on success
     } catch (error) {
       setErrorMessage(error.message); // Set error message for display
@@ -43,23 +42,6 @@ export default function Register() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                required
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
-                         placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
-                         dark:bg-gray-800 dark:focus:ring-indigo-400"
-                placeholder="Choose a username"
-              />
-            </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
