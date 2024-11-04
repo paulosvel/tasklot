@@ -19,6 +19,7 @@ import { Bell, CheckCircle, LogOut, Plus, Settings, Users, X } from "lucide-reac
 import TaskForm from "../components/TaskForm"
 import TaskList from "../components/TaskList"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import TeamManagement from "../components/TeamManagement"
 
 export default function Dashboard({ isAdmin, adminTeamId }) {
   const router = useRouter()
@@ -28,6 +29,16 @@ export default function Dashboard({ isAdmin, adminTeamId }) {
   const [tasks, setTasks] = useState([])
   const [notifications, setNotifications] = useState([])
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
+
+  const [isTeamManagementOpen, setIsTeamManagementOpen] = useState(false)
+
+  const handleNavigateToTasks = () => {
+    router.push('/dashboard/tasks')
+  }
+
+  const handleNavigateToTeams = () => {
+    router.push('/dashboard/teams')
+  }
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -74,14 +85,14 @@ export default function Dashboard({ isAdmin, adminTeamId }) {
         </div>
         <nav className="mt-8">
           <a
-            href="#"
+            onClick={handleNavigateToTasks}
             className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700"
           >
             <CheckCircle className="mr-3 h-5 w-5" />
             Tasks
           </a>
           <a
-            href="#"
+            onClick={handleNavigateToTeams}
             className="flex items-center px-4 py-2 mt-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <Users className="mr-3 h-5 w-5" />
