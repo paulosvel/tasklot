@@ -4,20 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const session = supabase.auth.getSession();
-    setCurrentUser(session.user);
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
-      setCurrentUser(session?.user);
-    });
-
-    return () => {
-      authListener?.unsubscribe();
-    };
-  }, []);
-
-  return <Component {...pageProps} currentUser={currentUser} />;
+  return <Component {...pageProps}/>;
 }

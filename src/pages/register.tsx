@@ -1,114 +1,101 @@
-// pages/register.tsx
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { signUpWithEmail } from "../lib/auth";
-import Link from "next/link";
+'use client'
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { signUpWithEmail } from "../lib/auth"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { CheckCircle, XCircle } from "lucide-react"
 
 export default function Register() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage(""); // Reset error message
+    e.preventDefault()
+    setIsLoading(true)
+    setErrorMessage("")
+    setIsSuccess(false)
 
     try {
-      await signUpWithEmail(formData.email, formData.password);
-      router.push("/login"); // Redirect on success
+      await signUpWithEmail(email, password)
+      setIsSuccess(true)
+      setTimeout(() => {
+        router.push("/login")
+      }, 1500)
     } catch (error) {
-      setErrorMessage(error.message); // Set error message for display
+      setErrorMessage(error.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Start managing your tasks today
-          </p>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email address
-              </label>
-              <input
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+          <CardDescription>Enter your email and password to register</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
                 id="email"
                 type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
-                         placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
-                         dark:bg-gray-800 dark:focus:ring-indigo-400"
-                placeholder="Enter your email"
               />
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Password
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
                 id="password"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
-                         placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
-                         dark:bg-gray-800 dark:focus:ring-indigo-400"
-                placeholder="Create a password"
               />
             </div>
-          </div>
-
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium 
-                       rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 
-                       focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-colors duration-200"
-            >
-              {isLoading ? "Creating..." : "Create Account"}
-            </button>
-          </div>
-        </form>
-
-        <div className="text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <XCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            {isSuccess && (
+              <Alert variant="default" className="border-green-500 text-green-700">
+                <CheckCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>Account created successfully. Redirecting to login...</AlertDescription>
+              </Alert>
+            )}
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          <Button className="w-full" type="submit" disabled={isLoading} onClick={handleSubmit}>
+            {isLoading ? "Creating account..." : "Create account"}
+          </Button>
+          <p className="text-sm text-center text-gray-600 dark:text-gray-400">
             Already have an account?{" "}
-            <Link 
-              href="/login" 
-              className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 
-                       dark:hover:text-indigo-300"
-            >
+            <Link href="/login" className="font-medium text-primary hover:underline">
               Sign in
             </Link>
           </p>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
-  );
+  )
 }

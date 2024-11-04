@@ -31,15 +31,14 @@ export const signUpWithEmail = async (email: string, password: string) => {
     email,
     password,
   });
-  console.log(data);
-  console.log(error);
+
   if (error) {
     throw new Error(error.message);
-
   }
 
+  // Insert user into the users table
   const { error: profileError } = await supabase
-    .from('users') // Ensure this table exists
+    .from('users')
     .insert([{ id: data.user?.id, email }]);
 
   if (profileError) {

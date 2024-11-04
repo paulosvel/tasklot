@@ -1,12 +1,14 @@
 // components/TeamInviteForm.tsx
 import React, { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import useUserStore from "../store/userStore";
 
-const TeamInviteForm = ({ teamId }) => {
+const TeamInviteForm = ({ invitedUserId }) => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { currentUserId, teamId } = useUserStore();
 
   const handleInvite = async (e) => {
     e.preventDefault();
@@ -17,14 +19,14 @@ const TeamInviteForm = ({ teamId }) => {
     try {
       const { data, error: inviteError } = await supabase
         .from("notifications")
-        .insert([{ team_id: teamId, email }]);
+        .insert([{ team_id: teamId, email, user_id: invitedUserId }]);
 
       if (inviteError) {
         setError("Error sending invitation");
         console.error("Invite error:", inviteError);
       } else {
         setSuccess("Invitation sent successfully!");
-        setEmail(""); // Clear the email field
+        setEmail("");
       }
     } catch (error) {
       console.error("Unexpected error:", error);
