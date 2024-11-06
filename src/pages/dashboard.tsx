@@ -20,7 +20,7 @@ import TaskForm from "../components/TaskForm"
 import TaskList from "../components/TaskList"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import TeamManagement from "../components/TeamManagement"
-
+import { signOut } from "../lib/auth"
 export default function Dashboard({ isAdmin, adminTeamId }) {
   const router = useRouter()
   const { setCurrentUserId, setCurrentUserEmail, setTeamId, currentUserId, currentUserEmail, teamId } = useUserStore()
@@ -31,6 +31,12 @@ export default function Dashboard({ isAdmin, adminTeamId }) {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
 
   const [isTeamManagementOpen, setIsTeamManagementOpen] = useState(false)
+
+
+  const handleSignOut = async () => {
+    await signOut()
+    router.push('/login')
+  }
 
   const handleNavigateToTasks = () => {
     router.push('/dashboard/tasks')
@@ -150,7 +156,7 @@ export default function Dashboard({ isAdmin, adminTeamId }) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span style={{ cursor: "pointer" }} onClick={handleSignOut}>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

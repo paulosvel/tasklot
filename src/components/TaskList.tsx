@@ -40,7 +40,7 @@ const TaskList = ({ currentUserId, teamId }) => {
     fetchTasks()
   }, [teamId])
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: any) => {
     switch (status) {
       case "completed":
         return "bg-green-500"
