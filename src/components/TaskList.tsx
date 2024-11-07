@@ -23,6 +23,7 @@ const TaskList = ({ currentUserId, teamId }) => {
         const { data, error } = await supabase
           .from("tasks")
           .select("*")
+          .eq("team_id", teamId)
 
         if (error) {
           throw new Error(error.message)
@@ -37,7 +38,9 @@ const TaskList = ({ currentUserId, teamId }) => {
       }
     }
 
-    fetchTasks()
+    if (teamId) {
+      fetchTasks()
+    }
   }, [teamId])
 
   const getStatusColor = (status: any) => {

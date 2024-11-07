@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Users, UserPlus, CheckCircle } from "lucide-react"
+import TeamCalendar from "./TeamCalendar"
+import TeamChat from "./TeamChat"
 
 const TeamManagement = () => {
   const router = useRouter()
@@ -210,6 +212,9 @@ const TeamManagement = () => {
             <AlertDescription>{success}</AlertDescription>
           </Alert>
         )}
+        {/* Render the calendar and chat below the tabs */}
+        <TeamCalendar />
+        <TeamChat />
       </CardContent>
     </Card>
   )
