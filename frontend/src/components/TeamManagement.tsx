@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "../lib/supabaseClient"
+import axiosInstance from "@/lib/axiosInstance"
 import useUserStore from "../store/userStore"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -27,10 +27,7 @@ const TeamManagement = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       if (currentUserId) {
-        const { data, error } = await supabase
-          .from("teams")
-          .select("*")
-          .eq("admin_id", currentUserId)
+        const { data, error } = await axiosInstance.get(`/teams?admin_id=${currentUserId}`)
 
         if (error) {
           console.error("Error fetching teams:", error)
@@ -50,38 +47,38 @@ const TeamManagement = () => {
     setError("")
     setSuccess("")
 
-    try {
-      const { data: teamData, error: teamError } = await supabase
-        .from("teams")
-        .insert([{ name: newTeamName, admin_id: currentUserId }])
-        .select()
+    // try {
+    //   const { data: teamData, error: teamError } = await supabase
+    //     .from("teams")
+    //     .insert([{ name: newTeamName, admin_id: currentUserId }])
+    //     .select()
 
-      if (teamError) {
-        setError("Error creating team")
-        console.error("Error creating team:", teamError)
-        return
-      }
+    //   if (teamError) {
+    //     setError("Error creating team")
+    //     console.error("Error creating team:", teamError)
+    //     return
+    //   }
 
-      const teamId = teamData[0].id
-      const { error: memberError } = await supabase
-        .from("team_members")
-        .insert([{ team_id: teamId, user_id: currentUserId, role: "admin" }])
+    //   const teamId = teamData[0].id
+    //   const { error: memberError } = await supabase
+    //     .from("team_members")
+    //     .insert([{ team_id: teamId, user_id: currentUserId, role: "admin" }])
 
-      if (memberError) {
-        setError("Error adding member to team")
-        console.error("Error adding member to team:", memberError)
-        return
-      }
+    //   if (memberError) {
+    //     setError("Error adding member to team")
+    //     console.error("Error adding member to team:", memberError)
+    //     return
+    //   }
 
-      setSuccess("Team created successfully!")
-      setNewTeamName("")
-      setTeams([...teams, teamData[0]])
-    } catch (error) {
-      console.error("Unexpected error:", error)
-      setError("An unexpected error occurred")
-    } finally {
-      setIsLoading(false)
-    }
+    //   setSuccess("Team created successfully!")
+    //   setNewTeamName("")
+    //   setTeams([...teams, teamData[0]])
+    // } catch (error) {
+    //   console.error("Unexpected error:", error)
+    //   setError("An unexpected error occurred")
+    // } finally {
+    //   setIsLoading(false)
+    // }
   }
 
   const handleInvite = async (e: React.FormEvent) => {

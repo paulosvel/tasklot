@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react"
-import { supabase } from "../lib/supabaseClient"
+import axiosInstance from "@/lib/axiosInstance"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -20,10 +20,7 @@ const TaskList = ({ currentUserId, teamId }) => {
       setIsLoading(true)
       setError("")
       try {
-        const { data, error } = await supabase
-          .from("tasks")
-          .select("*")
-          .eq("team_id", teamId)
+        const { data, error } = await axiosInstance.get(`/tasks`)
 
         if (error) {
           throw new Error(error.message)
@@ -38,10 +35,10 @@ const TaskList = ({ currentUserId, teamId }) => {
       }
     }
 
-    if (teamId) {
+    // if (teamId) {
       fetchTasks()
-    }
-  }, [teamId])
+    // }
+  }, [])
 
   const getStatusColor = (status: any) => {
     switch (status) {

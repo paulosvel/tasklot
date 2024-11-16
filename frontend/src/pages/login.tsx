@@ -17,27 +17,36 @@ export default function Login() {
   const [isSuccess, setIsSuccess] = useState(false)
   const router = useRouter()
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setErrorMessage("")
-    setIsSuccess(false)
-
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
+    setIsSuccess(false);
+  
     try {
-      const { user, error } = await axiosInstance.post("/users/login", { email, password })
-      if (error) {
-        setErrorMessage(error.message)
-        return
+      const response = await axiosInstance.post("/users/login", { email, password });
+      
+      // Check for errors in the response
+      if ((response as any).error) {
+        setErrorMessage((response as any).error.message);
+        return;
       }
-      setIsSuccess(true)
+  
+      // Set success state
+      setIsSuccess(true);
+      
+      // Store the token in localStorage
+      localStorage.setItem("token", (response as any).token);
+  
+      // Redirect to the dashboard after a short delay
       setTimeout(() => {
-        router.push("/dashboard")
-      }, 1500)
+        router.push("/dashboard");
+      }, 500);
     } catch (error: any) {
-      setErrorMessage(error.message)
+      setErrorMessage(error.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
