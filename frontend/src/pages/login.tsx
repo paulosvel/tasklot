@@ -2,14 +2,13 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signInWithEmail } from "../lib/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { CheckCircle, XCircle } from "lucide-react"
-
+import axiosInstance from "@/lib/axiosInstance"
 export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -17,7 +16,6 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const router = useRouter()
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -25,7 +23,7 @@ export default function Login() {
     setIsSuccess(false)
 
     try {
-      const { user, error } = await signInWithEmail(email, password)
+      const { user, error } = await axiosInstance.post("/users/login", { email, password })
       if (error) {
         setErrorMessage(error.message)
         return
@@ -34,7 +32,7 @@ export default function Login() {
       setTimeout(() => {
         router.push("/dashboard")
       }, 1500)
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage(error.message)
     } finally {
       setIsLoading(false)

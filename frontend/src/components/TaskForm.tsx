@@ -1,7 +1,4 @@
-'use client'
-
 import React, { useState, useEffect } from "react"
-import { supabase } from "../lib/supabaseClient"
 import useUserStore from "../store/userStore"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,51 +24,42 @@ const TaskForm = ({ onTaskCreated }) => {
   const [error, setError] = useState("")
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { data, error } = await supabase.from("users").select("id, email")
-      if (error) {
-        setError("Failed to load users")
-        console.error("Error fetching users:", error)
-      } else {
-        setUsers(data)
-      }
-    }
-    fetchUsers()
+
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
-    try {
-      const { data, error } = await supabase.from("tasks").insert([
-        {
-          title,
-          description,
-          due_date: dueDate,
-          owner_id: currentUserId,
-          assignee_id: assigneeId,
-          status,
-          team_id: teamId,
-        },
-      ]).select()
+    // try {
+    //   const { data, error } = await supabase.from("tasks").insert([
+    //     {
+    //       title,
+    //       description,
+    //       due_date: dueDate,
+    //       owner_id: currentUserId,
+    //       assignee_id: assigneeId,
+    //       status,
+    //       team_id: teamId,
+    //     },
+    //   ]).select()
 
-      if (error) {
-        setError("Error creating task")
-        console.error("Error creating task:", error)
-      } else {
-        setTitle("")
-        setDescription("")
-        setDueDate(undefined)
-        setAssigneeId("")
-        setStatus("pending")
-        onTaskCreated(data[0])
-      }
-    } catch (error) {
-      console.error("Unexpected error:", error)
-    } finally {
-      setIsLoading(false)
-    }
+    //   if (error) {
+    //     setError("Error creating task")
+    //     console.error("Error creating task:", error)
+    //   } else {
+    //     setTitle("")
+    //     setDescription("")
+    //     setDueDate(undefined)
+    //     setAssigneeId("")
+    //     setStatus("pending")
+    //     onTaskCreated(data[0])
+    //   }
+    // } catch (error) {
+    //   console.error("Unexpected error:", error)
+    // } finally {
+    //   setIsLoading(false)
+    // }
   }
 
   return (

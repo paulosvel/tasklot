@@ -7,14 +7,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import useUserStore from "../store/userStore"
-import { signOut } from "../lib/auth"
 
 const Navbar = ({ notifications }) => {
   const router = useRouter()
   const { currentUserEmail } = useUserStore()
 
   const handleSignOut = async () => {
-    await signOut()
+    // await signOut()
     router.push('/login')
   }
 
