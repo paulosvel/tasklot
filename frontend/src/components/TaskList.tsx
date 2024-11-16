@@ -20,11 +20,7 @@ const TaskList = ({ currentUserId, teamId }) => {
       setIsLoading(true)
       setError("")
       try {
-        const { data, error } = await axiosInstance.get(`/tasks`)
-
-        if (error) {
-          throw new Error(error.message)
-        }
+        const data  = await axiosInstance.get(`/tasks`)
 
         setTasks(data as any)
       } catch (error) {
@@ -35,9 +31,9 @@ const TaskList = ({ currentUserId, teamId }) => {
       }
     }
 
-    // if (teamId) {
+    //  if (teamId) {
       fetchTasks()
-    // }
+    //  }
   }, [])
 
   const getStatusColor = (status: any) => {
@@ -52,7 +48,7 @@ const TaskList = ({ currentUserId, teamId }) => {
   }
 
   const filterTasks = (status) => {
-    return tasks.filter((task) => task.status === status)
+    return tasks?.filter((task) => task.status === status)
   }
 
   const TaskCard = ({ task }) => (
@@ -119,22 +115,22 @@ const TaskList = ({ currentUserId, teamId }) => {
       </TabsList>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <TabsContent value="all">
-          {tasks.map((task) => (
+          {tasks?.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
         </TabsContent>
         <TabsContent value="todo">
-          {filterTasks('todo').map((task) => (
+          {filterTasks('todo')?.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
         </TabsContent>
         <TabsContent value="in-progress">
-          {filterTasks('in-progress').map((task) => (
+          {filterTasks('in-progress')?.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
         </TabsContent>
         <TabsContent value="completed">
-          {filterTasks('completed').map((task) => (
+          {filterTasks('completed')?.map((task) => (
             <TaskCard key={task.id} task={task} />
           ))}
         </TabsContent>
